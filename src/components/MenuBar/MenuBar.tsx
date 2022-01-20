@@ -11,7 +11,9 @@ import { Typography, Grid, Hidden } from '@material-ui/core';
 import ToggleAudioButton from '../Buttons/ToggleAudioButton/ToggleAudioButton';
 import ToggleChatButton from '../Buttons/ToggleChatButton/ToggleChatButton';
 import ToggleVideoButton from '../Buttons/ToggleVideoButton/ToggleVideoButton';
+import ToggleSizeButton from '../Buttons/ToggleSizeButton/ToggleSizeButton';
 import ToggleScreenShareButton from '../Buttons/ToogleScreenShareButton/ToggleScreenShareButton';
+import { useAppState } from '../../state';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -67,7 +69,10 @@ export default function MenuBar() {
   const { isSharingScreen, toggleScreenShare } = useVideoContext();
   const roomState = useRoomState();
   const isReconnecting = roomState === 'reconnecting';
-  const { room } = useVideoContext();
+  // const { room } = useVideoContext();
+  const { roomInfo } = useAppState();
+  const isInIframe = window.location !== window.parent.location;
+  // const isInIframe = true;
 
   return (
     <>
@@ -81,7 +86,7 @@ export default function MenuBar() {
         <Grid container justifyContent="space-around" alignItems="center">
           <Hidden smDown>
             <Grid style={{ flex: 1 }}>
-              <Typography variant="body1">{room!.name}</Typography>
+              <Typography variant="body1">{roomInfo?.title}</Typography>
             </Grid>
           </Hidden>
           <Grid item>
@@ -98,6 +103,7 @@ export default function MenuBar() {
           <Hidden smDown>
             <Grid style={{ flex: 1 }}>
               <Grid container justifyContent="flex-end">
+                {isInIframe && <ToggleSizeButton />}
                 <EndCallButton />
               </Grid>
             </Grid>

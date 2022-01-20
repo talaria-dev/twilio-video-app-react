@@ -3,8 +3,6 @@ import DeviceSelectionScreen from './DeviceSelectionScreen/DeviceSelectionScreen
 import IntroContainer from '../IntroContainer/IntroContainer';
 import MediaErrorSnackbar from './MediaErrorSnackbar/MediaErrorSnackbar';
 import RoomNameScreen from './RoomNameScreen/RoomNameScreen';
-import { useAppState } from '../../state';
-import { useParams } from 'react-router-dom';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 
 export enum Steps {
@@ -13,24 +11,11 @@ export enum Steps {
 }
 
 export default function PreJoinScreens() {
-  const { user } = useAppState();
   const { getAudioAndVideoTracks } = useVideoContext();
-  const { URLRoomName } = useParams();
   const [step, setStep] = useState(Steps.roomNameStep);
-
-  const [name, setName] = useState<string>(user?.displayName || '');
+  const [name, setName] = useState<string>('');
   const [roomName, setRoomName] = useState<string>('');
-
   const [mediaError, setMediaError] = useState<Error>();
-
-  useEffect(() => {
-    if (URLRoomName) {
-      setRoomName(URLRoomName);
-      if (user?.displayName) {
-        setStep(Steps.deviceSelectionStep);
-      }
-    }
-  }, [user, URLRoomName]);
 
   useEffect(() => {
     if (step === Steps.deviceSelectionStep && !mediaError) {
@@ -45,11 +30,15 @@ export default function PreJoinScreens() {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // If this app is deployed as a twilio function, don't change the URL because routing isn't supported.
-    if (!window.location.origin.includes('twil.io')) {
-      window.history.replaceState(null, '', window.encodeURI(`/room/${roomName}${window.location.search || ''}`));
-    }
+    // if (!window.location.origin.includes('twil.io')) {
+    //   window.history.replaceState(null, '', window.encodeURI(`/room/${roomName}${window.location.search || ''}`));
+    // }
+    console.log('HANDLE SUBMIT', name);
+    localStorage.setItem('userDisplayName', name);
     setStep(Steps.deviceSelectionStep);
   };
+
+  console.log('/// PRE JOIN SCREENS');
 
   return (
     <IntroContainer>
@@ -61,11 +50,12 @@ export default function PreJoinScreens() {
           setName={setName}
           setRoomName={setRoomName}
           handleSubmit={handleSubmit}
+          setStep={setStep}
         />
       )}
 
       {step === Steps.deviceSelectionStep && (
-        <DeviceSelectionScreen name={name} roomName={roomName} setStep={setStep} />
+        <DeviceSelectionScreen name={name} setName={setName} roomName={roomName} setStep={setStep} />
       )}
     </IntroContainer>
   );

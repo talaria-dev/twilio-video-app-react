@@ -58,14 +58,11 @@ export default function RecordingNotifications() {
       />
       <Snackbar
         open={activeSnackbar === Snackbars.recordingFinished}
-        headline="Recording Complete"
+        headline="Recording Complete!"
         message={
           <>
-            You can view the recording in the{' '}
-            <Link target="_blank" rel="noopener" href="https://www.twilio.com/console/video/logs/recordings">
-              Twilio Console
-            </Link>
-            . Recordings will be available once this room has ended.
+            Once this room is closed, we will start processing your recording. When the processing finishes, we will let
+            you know and send you the link for the video.
           </>
         }
         variant="info"

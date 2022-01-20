@@ -125,7 +125,7 @@ export const backgroundConfig = {
   images,
 };
 
-const virtualBackgroundAssets = '/virtualbackground';
+const virtualBackgroundAssets = './virtualbackground';
 let blurProcessor: GaussianBlurBackgroundProcessor;
 let virtualBackgroundProcessor: VirtualBackgroundProcessor;
 

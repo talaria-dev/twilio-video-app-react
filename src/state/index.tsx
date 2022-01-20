@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, useState } from 'react';
+import React, { createContext, useContext, useEffect, useReducer, useState } from 'react';
 import { RecordingRules, RoomType } from '../types';
 import { TwilioError } from 'twilio-video';
 import { settingsReducer, initialSettings, Settings, SettingsAction } from './settings/settingsReducer';
@@ -6,6 +6,7 @@ import useActiveSinkId from './useActiveSinkId/useActiveSinkId';
 import useFirebaseAuth from './useFirebaseAuth/useFirebaseAuth';
 import usePasscodeAuth from './usePasscodeAuth/usePasscodeAuth';
 import { User } from 'firebase';
+// import
 
 export interface StateContextType {
   error: TwilioError | Error | null;
@@ -21,10 +22,36 @@ export interface StateContextType {
   settings: Settings;
   dispatchSetting: React.Dispatch<SettingsAction>;
   roomType?: RoomType;
+
+  roomInfo?: {
+    error?: string;
+    room_id_token: string;
+    accessible_from: string;
+    accessible_to: string;
+    client_id: string;
+    client_logo: boolean;
+    client_name: string;
+    mode: string;
+    title: string;
+    user_avatar: string;
+    user_id: string;
+    user_name: string;
+  };
+
   updateRecordingRules(room_sid: string, rules: RecordingRules): Promise<object>;
 }
 
 export const StateContext = createContext<StateContextType>(null!);
+
+async function getRoomInfo() {
+  const url_str = new URL(window.location.href);
+  const token = url_str.searchParams.get('token');
+  let origin = url_str.origin.indexOf('localhost') !== -1 ? 'http://localhost:3600' : url_str.origin;
+  const api_endpoint = origin + '/api/confroom/?token=' + token;
+
+  const response = await fetch(api_endpoint);
+  return response.json();
+}
 
 /*
   The 'react-hooks/rules-of-hooks' linting rules prevent React Hooks from being called
@@ -40,6 +67,20 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const [isFetching, setIsFetching] = useState(false);
   const [activeSinkId, setActiveSinkId] = useActiveSinkId();
   const [settings, dispatchSetting] = useReducer(settingsReducer, initialSettings);
+
+  const [roomInfo, setRoomInfo] = useState();
+
+  useEffect(() => {
+    getRoomInfo().then(res => {
+      if (res.success) {
+        setRoomInfo(res.data);
+        document.getElementsByTagName('TITLE')[0].innerHTML = res.data.client_name + ' - Video Conference App';
+      } else {
+        setRoomInfo(res);
+      }
+    });
+  }, []);
+
   const [roomType, setRoomType] = useState<RoomType>();
 
   let contextValue = {
@@ -50,6 +91,7 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
     setActiveSinkId,
     settings,
     dispatchSetting,
+    roomInfo,
     roomType,
   } as StateContextType;
 
@@ -67,7 +109,12 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
     contextValue = {
       ...contextValue,
       getToken: async (user_identity, room_name) => {
-        const endpoint = process.env.REACT_APP_TOKEN_ENDPOINT || '/token';
+        console.log('getToken', user_identity, room_name);
+        // const endpoint = process.env.REACT_APP_TOKEN_ENDPOINT || '/token';
+        let endpoint = '/api/twilio';
+        if (window.location.hostname === 'localhost') {
+          endpoint = 'http://localhost:3600/api/twilio';
+        }
 
         return fetch(endpoint, {
           method: 'POST',
@@ -82,7 +129,14 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
         }).then(res => res.json());
       },
       updateRecordingRules: async (room_sid, rules) => {
-        const endpoint = process.env.REACT_APP_TOKEN_ENDPOINT || '/recordingrules';
+        console.log('updateRecordingRules', room_sid, rules);
+        // const endpoint = process.env.REACT_APP_TOKEN_ENDPOINT || '/recordingrules';
+        let endpoint = '/api/recordingrules';
+        if (window.location.hostname === 'localhost') {
+          endpoint = 'http://localhost:3600/api/recordingrules';
+        }
+
+        console.log('endpoint:', endpoint);
 
         return fetch(endpoint, {
           headers: {
@@ -93,6 +147,7 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
         })
           .then(async res => {
             const jsonResponse = await res.json();
+            console.log('jsonResponse', jsonResponse);
 
             if (!res.ok) {
               const recordingError = new Error(

@@ -9,6 +9,7 @@ import ToggleVideoButton from '../../Buttons/ToggleVideoButton/ToggleVideoButton
 import { useAppState } from '../../../state';
 import useChatContext from '../../../hooks/useChatContext/useChatContext';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
+import useLocalVideoToggle from '../../../hooks/useLocalVideoToggle/useLocalVideoToggle';
 
 const useStyles = makeStyles((theme: Theme) => ({
   gutterBottom: {
@@ -56,16 +57,34 @@ interface DeviceSelectionScreenProps {
   name: string;
   roomName: string;
   setStep: (step: Steps) => void;
+  setName: (name: string) => void;
 }
 
-export default function DeviceSelectionScreen({ name, roomName, setStep }: DeviceSelectionScreenProps) {
+export default function DeviceSelectionScreen({ name, roomName, setStep, setName }: DeviceSelectionScreenProps) {
   const classes = useStyles();
-  const { getToken, isFetching } = useAppState();
+  const [isVideoEnabled, toggleVideoEnabled] = useLocalVideoToggle();
+  const { getToken, isFetching, roomInfo } = useAppState();
   const { connect: chatConnect } = useChatContext();
-  const { connect: videoConnect, isAcquiringLocalTracks, isConnecting } = useVideoContext();
+  const { connect: videoConnect, isAcquiringLocalTracks, isConnecting, localTracks } = useVideoContext();
   const disableButtons = isFetching || isAcquiringLocalTracks || isConnecting;
 
+  const handleCancel = () => {
+    localStorage.setItem('userDisplayName', '');
+    setName('');
+    setStep(Steps.roomNameStep);
+
+    localTracks.forEach(track => {
+      if (track.kind === 'video' && track.isStarted) {
+        toggleVideoEnabled();
+      }
+    });
+  };
+
   const handleJoin = () => {
+    console.log('# JOIN ROOM');
+    console.log('isVideoEnabled:', isVideoEnabled);
+    console.log('name:', name);
+    console.log('roomName:', roomInfo?.title);
     getToken(name, roomName).then(({ token }) => {
       videoConnect(token);
       process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && chatConnect(token);
@@ -79,7 +98,10 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
           <CircularProgress variant="indeterminate" />
         </div>
         <div>
-          <Typography variant="body2" style={{ fontWeight: 'bold', fontSize: '16px' }}>
+          <Typography
+            variant="body2"
+            style={{ fontWeight: 'bold', fontSize: '16px', textAlign: 'center', marginTop: '20px' }}
+          >
             Joining Meeting
           </Typography>
         </div>
@@ -87,10 +109,12 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
     );
   }
 
+  console.log('/// DEVICE SELECTION SCREENS');
+  console.log('isVideoEnabled:', isVideoEnabled);
   return (
     <>
       <Typography variant="h5" className={classes.gutterBottom}>
-        Join {roomName}
+        Join the room {roomInfo?.title} as {name}
       </Typography>
 
       <Grid container justifyContent="center">
@@ -115,7 +139,7 @@ export default function DeviceSelectionScreen({ name, roomName, setStep }: Devic
               </Hidden>
             </div>
             <div className={classes.joinButtons}>
-              <Button variant="outlined" color="primary" onClick={() => setStep(Steps.roomNameStep)}>
+              <Button variant="outlined" color="primary" onClick={handleCancel}>
                 Cancel
               </Button>
               <Button

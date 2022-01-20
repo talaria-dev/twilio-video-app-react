@@ -1,7 +1,9 @@
 import { Grid, makeStyles, Theme, Typography } from '@material-ui/core';
 import React from 'react';
-import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
+// import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
+import { useAppState } from '../../state';
 import EndCallButton from '../Buttons/EndCallButton/EndCallButton';
+import ToggleSizeButton from '../Buttons/ToggleSizeButton/ToggleSizeButton';
 import Menu from '../MenuBar/Menu/Menu';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -32,12 +34,16 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export default function MobileTopMenuBar() {
   const classes = useStyles();
-  const { room } = useVideoContext();
+  // const { room } = useVideoContext();
+  const { roomInfo } = useAppState();
+  const isInIframe = window.location !== window.parent.location;
+  // const isInIframe = true;
 
   return (
     <Grid container alignItems="center" justifyContent="space-between" className={classes.container}>
-      <Typography variant="subtitle1">{room!.name}</Typography>
+      <Typography variant="subtitle1">{roomInfo?.title}</Typography>
       <div>
+        {isInIframe && <ToggleSizeButton className={classes.endCallButton} />}
         <EndCallButton className={classes.endCallButton} />
         <Menu buttonClassName={classes.settingsButton} />
       </div>
