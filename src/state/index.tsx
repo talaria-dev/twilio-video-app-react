@@ -36,6 +36,7 @@ export interface StateContextType {
     user_avatar: string;
     user_id: string;
     user_name: string;
+    email: string;
   };
 
   updateRecordingRules(room_sid: string, rules: RecordingRules): Promise<object>;
@@ -72,6 +73,7 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
 
   useEffect(() => {
     getRoomInfo().then(res => {
+      console.log(res);
       if (res.success) {
         setRoomInfo(res.data);
         document.getElementsByTagName('TITLE')[0].innerHTML = res.data.client_name + ' - Video Conference App';
