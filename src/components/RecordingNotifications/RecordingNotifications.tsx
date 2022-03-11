@@ -19,22 +19,19 @@ export default function RecordingNotifications() {
   const [message, setMessage] = useState(<></>);
   const genericMessage =
     'Once this room is closed, we will start processing your recording. When the processing finishes, we will let you know and send you the link for the video.';
-
   useEffect(() => {
     console.log('##### Set recording notification message');
     if (roomInfo!.email) {
       setMessage(
         <>
-          {genericMessage} Once this conference is completed, the recording will be processed and when it's ready the
-          link will be sent to {roomInfo!.user_name} to {roomInfo!.email}.
+          {genericMessage} Recording link will be sent to sent to {roomInfo!.user_name} to {roomInfo!.email} email.
         </>
       );
     } else {
       setMessage(
         <>
-          {genericMessage} Once this conference is completed, the recording will be processed and when it's ready the
-          link will be sent to {roomInfo!.user_name} via notification. He/she should keep the browser window open after
-          the hangup. Recording processing can take several hours.
+          {genericMessage} Recording link will be sent to {roomInfo!.user_name} via notification. He/she should keep the
+          browser window open after the hangup. Recording processing can take several hours.
         </>
       );
     }
