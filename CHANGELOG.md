@@ -1,3 +1,25 @@
+## 0.6.4 (March 9, 2022)
+
+### Dependency Upgrades
+
+- `twilio-video` has been upgraded from 2.20.1 to 2.21.0. With this update, the [twilio-video.js SDK](https://github.com/twilio/twilio-video.js) now supports WKWebView and SFSafariViewController on iOS version 14.3 or later. For more information, please refer to [this changelog entry](https://github.com/twilio/twilio-video.js/blob/master/CHANGELOG.md#2210-march-8-2022) from the twilio-video.js SDK.
+
+## 0.6.3 (March 2, 2022)
+
+### Dependency Upgrades
+
+- `twilio-video` has been upgraded from 2.19.0 to 2.20.1.
+
+### Bugfix
+
+- A problem was fixed in the [local server](server/index.ts) that caused index.html to be erroneously cached.
+
+## 0.6.2 (February 4, 2022)
+
+### Dependency Upgrades
+
+- `twilio-video` has been upgraded from 2.18.2 to to 2.19.0. This new version introduces a new feature called Adaptive Simulcast. When this feature is enabled (by setting `preferredVideoCodecs: "auto"` in the [ConnectOptions](https://sdk.twilio.com/js/video/releases/2.19.0/docs/global.html#ConnectOptions)), the SDK will use VP8 simulcast, and will enable/disable simulcast layers dynamically, thus improving bandwidth and CPU usage for the publishing client. For more information, please see [this changelog entry](https://github.com/twilio/twilio-video.js/blob/master/CHANGELOG.md#2190-january-31-2022) for the [Twilio Video JS SDK](https://github.com/twilio/twilio-video.js).
+
 ## 0.6.1 (December 17, 2021)
 
 ### Dependency Upgrades
