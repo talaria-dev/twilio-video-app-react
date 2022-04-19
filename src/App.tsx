@@ -132,11 +132,15 @@ export default function App() {
 
   const [initialziedConnect, setInitialziedConnect] = useState(false);
 
-  useEffect(() => {
-    if (!isAcquiringLocalTracks && autoJoin && roomState === 'disconnected') {
-      const urlSearchParams = new URLSearchParams(window.location.search);
-      const params = Object.fromEntries(urlSearchParams.entries());
+  const [isAudioEnabled, toggleAudioEnabled] = useLocalAudioToggle();
+  const [isVideoEnabled, toggleVideoEnabled] = useLocalVideoToggle();
 
+  useEffect(() => {
+    // console.log('@@@@@@@@ : localTracks :', isAcquiringLocalTracks);
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const params = Object.fromEntries(urlSearchParams.entries());
+
+    if (!isAcquiringLocalTracks && autoJoin && roomState === 'disconnected') {
       if (!initialziedConnect) {
         setInitialziedConnect(true);
 
@@ -146,8 +150,22 @@ export default function App() {
       }
     }
 
-    if (roomState === 'connected') {
+    if (autoJoin && roomState === 'connected') {
       setAutoJoin(false);
+      if (params.mic && params.cam) {
+        if (params.mic === 'on' && !isAudioEnabled) {
+          toggleAudioEnabled();
+        }
+        if (params.cam === 'on' && !isVideoEnabled) {
+          toggleVideoEnabled();
+        }
+        if (params.mic === 'off' && isAudioEnabled) {
+          toggleAudioEnabled();
+        }
+        if (params.cam === 'off' && isVideoEnabled) {
+          toggleVideoEnabled();
+        }
+      }
     }
   }, [localTracks]);
 
@@ -177,6 +195,7 @@ export default function App() {
       if (!roomNotReady && !roomExpired) {
         const urlSearchParams = new URLSearchParams(window.location.search);
         const params = Object.fromEntries(urlSearchParams.entries());
+        console.log(params);
 
         if (params.hasOwnProperty('name')) {
           setAutoJoin(true);
@@ -219,7 +238,6 @@ export default function App() {
       </div>
     );
   } else {
-    console.log('############# roomState :', roomState);
     const isNotInIframe = window.location === window.parent.location;
 
     return (
