@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { styled, Theme } from '@material-ui/core/styles';
 import { makeStyles, Typography } from '@material-ui/core';
 
@@ -112,8 +112,8 @@ export default function App() {
   const classes = useStyles();
   const roomState = useRoomState();
   const { getToken, roomInfo } = useAppState();
-  const { getAudioAndVideoTracks } = useVideoContext();
-  const { connect: videoConnect, isAcquiringLocalTracks, localTracks } = useVideoContext();
+
+  const { connect: videoConnect, isAcquiringLocalTracks, localTracks, getAudioAndVideoTracks } = useVideoContext();
 
   const [showPreloader, setShowPreloader] = useState(true);
   const [tokenError, setTokenError] = useState(false);
@@ -136,22 +136,83 @@ export default function App() {
   const [isVideoEnabled, toggleVideoEnabled] = useLocalVideoToggle();
 
   useEffect(() => {
-    // console.log('@@@@@@@@ : localTracks :', isAcquiringLocalTracks);
+    console.log('HHHHHHHHHH : RoomInfo Changed :', roomInfo);
+
+    if (roomInfo === undefined) {
+      setShowPreloader(true);
+      return;
+    }
+
+    if (roomInfo.error) {
+      setShowPreloader(false);
+      setTokenError(true);
+      return;
+    }
+
+    let valid_from_obj = new Date(roomInfo.accessible_from);
+    let valid_from_str = valid_from_obj.toString().split(' GMT')[0];
+    setRoomValidFrom(valid_from_str);
+
+    let valid_to_obj = new Date(roomInfo.accessible_to);
+    let valid_to_str = valid_to_obj.toString().split(' GMT')[0];
+    setRoomValidTo(valid_to_str);
+
+    let room_not_ready = false;
+    if (valid_from_obj.getTime() > Date.now()) {
+      setRoomNotReady(true);
+      room_not_ready = true;
+    }
+
+    let room_expired = false;
+    if (valid_to_obj.getTime() < Date.now()) {
+      setRoomExpired(true);
+      room_expired = true;
+    }
+
+    console.log('# roomNotReady :', room_not_ready);
+    console.log('# roomExpired :', room_expired);
+    console.log('# roomExpired :', roomExpired);
+    console.log('# roomNotReady :', roomNotReady);
+    console.log('# roomSate :', roomState);
+
     const urlSearchParams = new URLSearchParams(window.location.search);
     const params = Object.fromEntries(urlSearchParams.entries());
 
-    if (!isAcquiringLocalTracks && autoJoin && roomState === 'disconnected') {
-      if (!initialziedConnect) {
-        setInitialziedConnect(true);
+    if (!room_not_ready && !room_expired && params.hasOwnProperty('name')) {
+      setAutoJoin(true);
 
-        getToken(params.name, roomInfo!.room_id_token).then(({ token }) => {
-          videoConnect(token);
-        });
-      }
+      getAudioAndVideoTracks().catch(error => {
+        console.log('Error acquiring local media:');
+        console.dir(error);
+      });
+    } else {
+      setShowPreloader(false);
     }
+  }, [roomInfo]);
 
-    if (autoJoin && roomState === 'connected') {
-      setAutoJoin(false);
+  const [localMediaReady, setLocalMediaReady] = useState(false);
+
+  useEffect(() => {
+    let cam = false;
+    let mic = false;
+
+    localTracks.forEach(track => {
+      if (track.kind === 'video') {
+        cam = true;
+      }
+      if (track.kind === 'audio') {
+        mic = true;
+      }
+    });
+
+    if (cam && mic && !isAcquiringLocalTracks && !localMediaReady && autoJoin) {
+      console.log('LOCAL MEDIA READY');
+      // setShowPreloader(false);
+      setLocalMediaReady(true);
+
+      const urlSearchParams = new URLSearchParams(window.location.search);
+      const params = Object.fromEntries(urlSearchParams.entries());
+
       if (params.mic && params.cam) {
         if (params.mic === 'on' && !isAudioEnabled) {
           toggleAudioEnabled();
@@ -166,49 +227,20 @@ export default function App() {
           toggleVideoEnabled();
         }
       }
+
+      getToken(params.name, roomInfo!.room_id_token)
+        .then(({ token }) => {
+          videoConnect(token).then(() => {
+            console.log('CONNECTED TO ROOM');
+            setShowPreloader(false);
+          });
+        })
+        .catch(error => {
+          setShowPreloader(false);
+          setTokenError(true);
+        });
     }
   }, [localTracks]);
-
-  useEffect(() => {
-    if (roomInfo === undefined) {
-      setShowPreloader(true);
-    } else if (roomInfo.error) {
-      setShowPreloader(false);
-      setTokenError(true);
-    } else {
-      let valid_from_obj = new Date(roomInfo.accessible_from);
-      let valid_from_str = valid_from_obj.toString().split(' GMT')[0];
-      setRoomValidFrom(valid_from_str);
-
-      let valid_to_obj = new Date(roomInfo.accessible_to);
-      let valid_to_str = valid_to_obj.toString().split(' GMT')[0];
-      setRoomValidTo(valid_to_str);
-
-      if (valid_from_obj.getTime() > Date.now()) {
-        setRoomNotReady(true);
-      }
-
-      if (valid_to_obj.getTime() < Date.now()) {
-        setRoomExpired(true);
-      }
-
-      if (!roomNotReady && !roomExpired) {
-        const urlSearchParams = new URLSearchParams(window.location.search);
-        const params = Object.fromEntries(urlSearchParams.entries());
-        console.log(params);
-
-        if (params.hasOwnProperty('name')) {
-          setAutoJoin(true);
-
-          getAudioAndVideoTracks().catch(error => {
-            console.log('Error acquiring local media:');
-            console.dir(error);
-          });
-        }
-      }
-      setShowPreloader(false);
-    }
-  }, [roomInfo]);
 
   if (showPreloader) {
     return (
@@ -216,44 +248,44 @@ export default function App() {
         <CircularProgress />
       </div>
     );
-  } else if (tokenError) {
+  }
+
+  if (tokenError) {
     return (
       <RoomError
         title="The room is not accessible"
         message="The room token is not valid. Please enter the valid room token and try again."
       />
     );
-  } else if (roomNotReady) {
+  }
+
+  if (roomNotReady) {
     const msg = 'Room ' + roomInfo?.title + ' will be accessible at ' + roomValidFrom;
 
     return <RoomError title="Room is not accessible yet" message={msg} />;
-  } else if (roomExpired) {
+  }
+
+  if (roomExpired) {
     const msg = 'Room ' + roomInfo?.title + ' expired at ' + roomValidTo;
 
     return <RoomError title="Room expired" message={msg} />;
-  } else if (autoJoin) {
-    return (
-      <div className={classes.preloader}>
-        <CircularProgress />
-      </div>
-    );
-  } else {
-    const isNotInIframe = window.location === window.parent.location;
-
-    return (
-      <Container style={{ height }}>
-        {roomState === 'disconnected' && isNotInIframe ? (
-          <PreJoinScreens />
-        ) : (
-          <Main>
-            <ReconnectingNotification />
-            <RecordingNotifications />
-            <MobileTopMenuBar />
-            <Room />
-            <MenuBar />
-          </Main>
-        )}
-      </Container>
-    );
   }
+
+  const isNotInIframe = window.location === window.parent.location;
+
+  return (
+    <Container style={{ height }}>
+      {roomState === 'disconnected' && isNotInIframe ? (
+        <PreJoinScreens />
+      ) : (
+        <Main>
+          <ReconnectingNotification />
+          <RecordingNotifications />
+          <MobileTopMenuBar />
+          <Room />
+          <MenuBar />
+        </Main>
+      )}
+    </Container>
+  );
 }

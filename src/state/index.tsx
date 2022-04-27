@@ -73,7 +73,6 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
 
   useEffect(() => {
     getRoomInfo().then(res => {
-      console.log(res);
       if (res.success) {
         setRoomInfo(res.data);
         document.getElementsByTagName('TITLE')[0].innerHTML = res.data.client_name + ' - Video Conference App';
