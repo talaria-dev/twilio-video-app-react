@@ -213,21 +213,6 @@ export default function App() {
       const urlSearchParams = new URLSearchParams(window.location.search);
       const params = Object.fromEntries(urlSearchParams.entries());
 
-      if (params.mic && params.cam) {
-        if (params.mic === 'on' && !isAudioEnabled) {
-          toggleAudioEnabled();
-        }
-        if (params.cam === 'on' && !isVideoEnabled) {
-          toggleVideoEnabled();
-        }
-        if (params.mic === 'off' && isAudioEnabled) {
-          toggleAudioEnabled();
-        }
-        if (params.cam === 'off' && isVideoEnabled) {
-          toggleVideoEnabled();
-        }
-      }
-
       getToken(params.name, roomInfo!.room_id_token)
         .then(({ token }) => {
           videoConnect(token).then(() => {
@@ -236,8 +221,8 @@ export default function App() {
           });
         })
         .catch(error => {
-          setShowPreloader(false);
           setTokenError(true);
+          setShowPreloader(false);
         });
     }
   }, [localTracks]);
