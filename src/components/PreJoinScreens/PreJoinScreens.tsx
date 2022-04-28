@@ -38,8 +38,6 @@ export default function PreJoinScreens() {
     setStep(Steps.deviceSelectionStep);
   };
 
-  console.log('/// PRE JOIN SCREENS');
-
   return (
     <IntroContainer>
       <MediaErrorSnackbar error={mediaError} />

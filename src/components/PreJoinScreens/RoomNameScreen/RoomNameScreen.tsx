@@ -60,12 +60,12 @@ export default function RoomNameScreen({
     dispatchSetting({ name: 'bandwidthProfileMode' as keyof Settings, value: _mode as string });
   }, [roomInfo]);
 
-  const userDisplayName = localStorage.getItem('userDisplayName');
+  // const userDisplayName = localStorage.getItem('userDisplayName');
 
-  if (userDisplayName) {
-    setName(userDisplayName);
-    setStep(Steps.deviceSelectionStep);
-  }
+  // if (userDisplayName) {
+  //   setName(userDisplayName);
+  //   setStep(Steps.deviceSelectionStep);
+  // }
 
   const hasUsername = !window.location.search.includes('customIdentity=true') && user?.displayName;
 

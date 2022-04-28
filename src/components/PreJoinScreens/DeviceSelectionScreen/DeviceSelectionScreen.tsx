@@ -7,7 +7,7 @@ import { Steps } from '../PreJoinScreens';
 import ToggleAudioButton from '../../Buttons/ToggleAudioButton/ToggleAudioButton';
 import ToggleVideoButton from '../../Buttons/ToggleVideoButton/ToggleVideoButton';
 import { useAppState } from '../../../state';
-import useChatContext from '../../../hooks/useChatContext/useChatContext';
+// import useChatContext from '../../../hooks/useChatContext/useChatContext';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 import useLocalVideoToggle from '../../../hooks/useLocalVideoToggle/useLocalVideoToggle';
 
@@ -64,7 +64,7 @@ export default function DeviceSelectionScreen({ name, roomName, setStep, setName
   const classes = useStyles();
   const [isVideoEnabled, toggleVideoEnabled] = useLocalVideoToggle();
   const { getToken, isFetching, roomInfo } = useAppState();
-  const { connect: chatConnect } = useChatContext();
+  // const { connect: chatConnect } = useChatContext();
   const { connect: videoConnect, isAcquiringLocalTracks, isConnecting, localTracks } = useVideoContext();
   const disableButtons = isFetching || isAcquiringLocalTracks || isConnecting;
 
@@ -83,17 +83,17 @@ export default function DeviceSelectionScreen({ name, roomName, setStep, setName
   const handleJoin = () => {
     console.log('# JOIN ROOM');
     console.log('isVideoEnabled:', isVideoEnabled);
-    console.log('name:', name);
-    console.log('roomName:', roomInfo?.title);
+    // console.log('name:', name);
+    // console.log('roomName:', roomInfo?.title);
     getToken(name, roomName).then(({ token }) => {
       videoConnect(token);
-      process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && chatConnect(token);
+      // process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && chatConnect(token);
     });
   };
 
   if (isFetching || isConnecting) {
     return (
-      <Grid container justifyContent="center" alignItems="center" direction="column" style={{ height: '100%' }}>
+      <Grid container justifyContent="center" alignItems="center" direction="column">
         <div>
           <CircularProgress variant="indeterminate" />
         </div>
@@ -109,8 +109,8 @@ export default function DeviceSelectionScreen({ name, roomName, setStep, setName
     );
   }
 
-  console.log('/// DEVICE SELECTION SCREENS');
-  console.log('isVideoEnabled:', isVideoEnabled);
+  // console.log('/// DEVICE SELECTION SCREENS');
+  // console.log('isVideoEnabled:', isVideoEnabled);
   return (
     <>
       <Typography variant="h5" className={classes.gutterBottom}>
