@@ -7,11 +7,20 @@ import ToggleSizeButton from '../Buttons/ToggleSizeButton/ToggleSizeButton';
 import Menu from '../MenuBar/Menu/Menu';
 
 const useStyles = makeStyles((theme: Theme) => ({
+  roomName: {
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    [theme.breakpoints.down('xs')]: {
+      width: '130px',
+    },
+  },
   container: {
     background: 'white',
-    padding: '1em',
+    paddingLeft: '1em',
+    paddingRight: '1em',
     display: 'none',
-    // height: `${theme.mobileTopBarHeight}px`,
+    height: `${theme.mobileTopBarHeight}px`,
     [theme.breakpoints.down('sm')]: {
       display: 'flex',
     },
@@ -27,7 +36,7 @@ const useStyles = makeStyles((theme: Theme) => ({
       minWidth: '28px',
       border: '1px solid rgb(136, 140, 142)',
       padding: 0,
-      margin: '0 1em',
+      margin: '0 0 0 1em',
     },
   },
 }));
@@ -41,7 +50,9 @@ export default function MobileTopMenuBar() {
 
   return (
     <Grid container alignItems="center" justifyContent="space-between" className={classes.container}>
-      <Typography variant="subtitle1">{roomInfo?.title}</Typography>
+      <Typography variant="subtitle1" className={classes.roomName}>
+        {roomInfo?.title}
+      </Typography>
       <div>
         {/* {isInIframe && <ToggleSizeButton className={classes.endCallButton} />} */}
         <ToggleSizeButton className={classes.endCallButton} />
