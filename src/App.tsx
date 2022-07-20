@@ -158,7 +158,10 @@ export default function App() {
     setRoomValidTo(valid_to_str);
 
     let room_not_ready = false;
-    if (valid_from_obj.getTime() > Date.now()) {
+    console.log('valid_from_obj.getTime() :', valid_from_obj.getTime());
+    console.log('Date.now() :', Date.now());
+
+    if (valid_from_obj.getTime() - 60000 > Date.now()) {
       setRoomNotReady(true);
       room_not_ready = true;
     }
