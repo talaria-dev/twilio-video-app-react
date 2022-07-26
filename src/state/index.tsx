@@ -39,7 +39,7 @@ export interface StateContextType {
     email: string;
   };
 
-  updateRecordingRules(room_sid: string, rules: RecordingRules): Promise<object>;
+  updateRecordingRules(room_sid: string, rules: RecordingRules, client_id: string): Promise<object>;
 }
 
 export const StateContext = createContext<StateContextType>(null!);
@@ -129,8 +129,8 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
           }),
         }).then(res => res.json());
       },
-      updateRecordingRules: async (room_sid, rules) => {
-        console.log('updateRecordingRules', room_sid, rules);
+      updateRecordingRules: async (room_sid, rules, client_id) => {
+        console.log('updateRecordingRules', room_sid, rules, client_id);
         // const endpoint = process.env.REACT_APP_TOKEN_ENDPOINT || '/recordingrules';
         let endpoint = '/api/recordingrules';
         if (window.location.hostname === 'localhost') {
@@ -143,7 +143,7 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ room_sid, rules }),
+          body: JSON.stringify({ room_sid, rules, client_id }),
           method: 'POST',
         })
           .then(async res => {
@@ -181,10 +181,10 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
       });
   };
 
-  const updateRecordingRules: StateContextType['updateRecordingRules'] = (room_sid, rules) => {
+  const updateRecordingRules: StateContextType['updateRecordingRules'] = (room_sid, rules, client_id) => {
     setIsFetching(true);
     return contextValue
-      .updateRecordingRules(room_sid, rules)
+      .updateRecordingRules(room_sid, rules, client_id)
       .then(res => {
         setIsFetching(false);
         return res;

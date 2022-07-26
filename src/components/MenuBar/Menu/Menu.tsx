@@ -32,7 +32,7 @@ export default function Menu(props: { buttonClassName?: string }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
 
-  const { isFetching, updateRecordingRules, roomType } = useAppState();
+  const { isFetching, updateRecordingRules, roomType, roomInfo } = useAppState();
   const { setIsChatWindowOpen } = useChatContext();
   const isRecording = useIsRecording();
   const { room, setIsBackgroundSelectionOpen } = useVideoContext();
@@ -76,9 +76,9 @@ export default function Menu(props: { buttonClassName?: string }) {
             onClick={() => {
               setMenuOpen(false);
               if (isRecording) {
-                updateRecordingRules(room!.sid, [{ type: 'exclude', all: true }]);
+                updateRecordingRules(room!.sid, [{ type: 'exclude', all: true }], roomInfo!.client_id);
               } else {
-                updateRecordingRules(room!.sid, [{ type: 'include', all: true }]);
+                updateRecordingRules(room!.sid, [{ type: 'include', all: true }], roomInfo!.client_id);
               }
             }}
             data-cy-recording-button
