@@ -11,6 +11,7 @@ declare module '@material-ui/core/styles/createTheme' {
     sidebarMobilePadding: number;
     participantBorderWidth: number;
     rightDrawerWidth: number;
+    galleryViewBackgroundColor: string;
   }
 
   // allow configuration using `createMuiTheme`
@@ -24,6 +25,7 @@ declare module '@material-ui/core/styles/createTheme' {
     sidebarMobilePadding: number;
     participantBorderWidth: number;
     rightDrawerWidth?: number;
+    galleryViewBackgroundColor: string;
   }
 }
 
@@ -106,6 +108,49 @@ export default createTheme({
         borderColor: 'rgb(136, 140, 142)',
       },
     },
+    MuiSwitch: {
+      root: {
+        width: 42,
+        height: 18,
+        padding: 0,
+        display: 'flex',
+        marginRight: '0.5em',
+      },
+      switchBase: {
+        padding: 2,
+        color: '#FFFFFF',
+        '&$checked': {
+          transform: 'translateX(18px)',
+          top: '50%',
+          marginTop: -24 / 2,
+          '&$disabled': {
+            '& + $track': {
+              opacity: '0.5',
+            },
+          },
+        },
+      },
+      colorSecondary: {
+        '&$checked': {
+          // Controls checked color for the thumb
+          color: 'FFFFF',
+        },
+      },
+      thumb: {
+        width: 14,
+        height: 14,
+        boxShadow: 'none',
+      },
+      track: {
+        borderRadius: 16 / 2,
+        opacity: 1,
+        backgroundColor: '#E1E3EA',
+        '$checked$checked + &': {
+          opacity: 1,
+          backgroundColor: '#14B053',
+        },
+      },
+    },
   },
   typography: {
     fontFamily: 'Inter, sans-serif',
@@ -124,4 +169,5 @@ export default createTheme({
   participantBorderWidth: 2,
   mobileTopBarHeight: 52,
   rightDrawerWidth: 320,
+  galleryViewBackgroundColor: '#121C2D',
 });

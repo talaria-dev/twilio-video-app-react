@@ -8,8 +8,11 @@ import RoomNameScreen from './RoomNameScreen/RoomNameScreen';
 import { useParams } from 'react-router-dom';
 import { useAppState } from '../../state';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
+import { setImmediate } from 'timers';
 
+// @ts-ignore
 delete window.location;
+
 // @ts-ignore
 window.location = {
   pathname: '',

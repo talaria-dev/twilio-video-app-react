@@ -7,6 +7,7 @@ import { useAppState } from '../../../state';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 import ToggleVideoButton from '../../Buttons/ToggleVideoButton/ToggleVideoButton';
 import ToggleAudioButton from '../../Buttons/ToggleAudioButton/ToggleAudioButton';
+import { setImmediate } from 'timers';
 
 const mockUseAppState = useAppState as jest.Mock<any>;
 const mockUseVideoContext = useVideoContext as jest.Mock<any>;
@@ -24,6 +25,7 @@ mockUseVideoContext.mockImplementation(() => ({
   connect: mockConnect,
   isAcquiringLocalTracks: false,
   isConnecting: false,
+  localTracks: [],
 }));
 
 describe('the DeviceSelectionScreen component', () => {
@@ -37,6 +39,7 @@ describe('the DeviceSelectionScreen component', () => {
       connect: mockConnect,
       isAcquiringLocalTracks: false,
       isConnecting: true,
+      localTracks: [],
     }));
 
     const wrapper = shallow(<DeviceSelectionScreen name="test name" roomName="test room name" setStep={() => {}} />);
@@ -59,6 +62,7 @@ describe('the DeviceSelectionScreen component', () => {
       connect: mockConnect,
       isAcquiringLocalTracks: true,
       isConnecting: false,
+      localTracks: [],
     }));
 
     const wrapper = shallow(<DeviceSelectionScreen name="test name" roomName="test room name" setStep={() => {}} />);
@@ -81,6 +85,7 @@ describe('the DeviceSelectionScreen component', () => {
       connect: mockConnect,
       isAcquiringLocalTracks: false,
       isConnecting: false,
+      localTracks: [],
     }));
     mockUseAppState.mockImplementationOnce(() => ({ getToken: mockGetToken, isFetching: true }));
     const wrapper = shallow(<DeviceSelectionScreen name="test name" roomName="test room name" setStep={() => {}} />);

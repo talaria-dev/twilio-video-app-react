@@ -1,3 +1,62 @@
+## 0.9.1 (January 10, 2023)
+
+## Changes
+
+- Modified CircleCI deploy script to store gcloud service account credentials in proper JSON format.
+
+## 0.9.0 (November 23, 2022)
+
+### New Features
+
+- Krisp audio noise cancellation has been added. [#750](https://github.com/twilio/twilio-video-app-react/pull/750)
+
+## 0.8.0 (November 14, 2022)
+
+### New Feature
+
+- This release adds the ability to maintain audio continuity when the default audio input device changes. If the user chooses a specific audio device from the audio settings, then this feature does not apply.
+
+### Dependency Changes
+
+- `twilio-video` has been upgraded from 2.23.0 to 2.25.0.
+
+## 0.7.1 (August 5, 2022)
+
+### Dependency Upgrades
+
+- `twilio-video` has been upgraded from 2.22.2 to 2.23.0.
+- `@twilio/video-room-monitor` has been upgraded from 1.0.0 to 1.0.1.
+- `@twilio-labs/plugin-rtc` has been upgraded from 0.8.2 to 0.8.4.
+- `@twilio/conversations` has been upgraded from 1.2.3 to 2.1.0.
+- `react-scripts` has been upgraded from 4.0.3 to 5.0.0.
+
+## 0.7.0 (July 6, 2022)
+
+### New Feature
+
+- This release adds a Gallery View feature. Gallery View is an additional layout setting which allows users to view other participants' videos in the form of a grid. Users can update the max number of participants per page via the Audio and Video Settings > Gallery View. Users can also switch to Speaker View (the app's original layout) by accessing the More menu. Please note that Gallery View will be enabled by default.
+
+### Dependency Upgrade
+
+- `twilio-video` has been upgraded from 2.21.2 to 2.22.0.
+
+### Bugfixes
+
+- Fixes an issue where the `<AudioLevelIndicator />` could cause a memory leak after it is mounted/unmounted many times. [#703](https://github.com/twilio/twilio-video-app-react/pull/703)
+- Provides a workaround for a bug introduced in Chrome 103, where calling `.stop()` on a cloned `MediaStreamTrack` could cause a loss of audio in the app. [#713](https://github.com/twilio/twilio-video-app-react/pull/713)
+- Removes the `frame rate` and `resolution` constraints when requesting a screen share track which should allow for higher quality screen share tracks to be published. [#715](https://github.com/twilio/twilio-video-app-react/pull/715)
+
+## 0.6.5 (June 3, 2022)
+
+### Dependency Upgrade
+
+- `twilio-video` has been upgraded from 2.21.0 to 2.21.2. This new version fixes an issue where the `dimensionsChanged` event does not fire when the track dimensions first become available. This fixes an issue in this app where portrait-oriented video tracks are not displayed correctly. See [this issue](https://github.com/twilio/twilio-video.js/issues/1470).
+
+### Bugfixes
+
+- Improves a problem where the local video track is not properly displayed in Safari. See [this issue](https://github.com/twilio/twilio-video.js/issues/1775). [#691](https://github.com/twilio/twilio-video-app-react/pull/691).
+- This app now displays a useful error message when screen sharing is prevented due to a lack of system permissions.
+
 ## 0.6.4 (March 9, 2022)
 
 ### Dependency Upgrades

@@ -5,6 +5,7 @@ import Button from '@material-ui/core/Button';
 import EndCallButton from '../Buttons/EndCallButton/EndCallButton';
 import { isMobile } from '../../utils';
 import Menu from './Menu/Menu';
+import useParticipants from '../../hooks/useParticipants/useParticipants';
 import useRoomState from '../../hooks/useRoomState/useRoomState';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { Typography, Grid, Hidden } from '@material-ui/core';
@@ -69,8 +70,9 @@ export default function MenuBar() {
   const { isSharingScreen, toggleScreenShare } = useVideoContext();
   const roomState = useRoomState();
   const isReconnecting = roomState === 'reconnecting';
-  // const { room } = useVideoContext();
-  const { roomInfo } = useAppState();
+  const { room } = useVideoContext();
+  const participants = useParticipants();
+  //const { roomInfo } = useAppState();
   const isInIframe = window.location !== window.parent.location;
   // const isInIframe = true;
 
@@ -86,7 +88,9 @@ export default function MenuBar() {
         <Grid container justifyContent="space-around" alignItems="center">
           <Hidden smDown>
             <Grid style={{ flex: 1 }}>
-              <Typography variant="body1">{roomInfo?.title}</Typography>
+              <Typography variant="body1">
+                {room!.name} | {participants.length + 1} participant{participants.length ? 's' : ''}
+              </Typography>
             </Grid>
           </Hidden>
           <Grid item>
