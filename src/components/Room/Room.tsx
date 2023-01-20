@@ -80,6 +80,8 @@ export default function Room() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const screenShareParticipant = useScreenShareParticipant();
+  const [isAudioEnabled, toggleAudioEnabled] = useLocalAudioToggle();
+  const [isVideoEnabled, toggleVideoEnabled] = useLocalVideoToggle();
 
   // Here we switch to speaker view when a participant starts sharing their screen, but
   // the user is still free to switch back to gallery view.

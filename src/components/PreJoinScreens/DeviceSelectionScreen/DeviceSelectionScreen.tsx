@@ -8,8 +8,9 @@ import { Steps } from '../PreJoinScreens';
 import ToggleAudioButton from '../../Buttons/ToggleAudioButton/ToggleAudioButton';
 import ToggleVideoButton from '../../Buttons/ToggleVideoButton/ToggleVideoButton';
 import { useAppState } from '../../../state';
-// import useChatContext from '../../../hooks/useChatContext/useChatContext';
+import useChatContext from '../../../hooks/useChatContext/useChatContext';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
+import useLocalVideoToggle from '../../../hooks/useLocalVideoToggle/useLocalVideoToggle';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { useKrispToggle } from '../../../hooks/useKrispToggle/useKrispToggle';
 import SmallCheckIcon from '../../../icons/SmallCheckIcon';
@@ -78,9 +79,10 @@ interface DeviceSelectionScreenProps {
 
 export default function DeviceSelectionScreen({ name, roomName, setStep, setName }: DeviceSelectionScreenProps) {
   const classes = useStyles();
-  const { getToken, isFetching, isKrispEnabled, isKrispInstalled } = useAppState();
+  const { getToken, isFetching, isKrispEnabled, isKrispInstalled, roomInfo } = useAppState();
   const { connect: chatConnect } = useChatContext();
-  const { connect: videoConnect, isAcquiringLocalTracks, isConnecting } = useVideoContext();
+  const [isVideoEnabled, toggleVideoEnabled] = useLocalVideoToggle();
+  const { connect: videoConnect, isAcquiringLocalTracks, isConnecting, localTracks } = useVideoContext();
   const { toggleKrisp } = useKrispToggle();
   const disableButtons = isFetching || isAcquiringLocalTracks || isConnecting;
 
@@ -98,12 +100,12 @@ export default function DeviceSelectionScreen({ name, roomName, setStep, setName
 
   const handleJoin = () => {
     console.log('# JOIN ROOM');
-    console.log('isVideoEnabled:', isVideoEnabled);
+    //console.log('isVideoEnabled:', isVideoEnabled);
     // console.log('name:', name);
     // console.log('roomName:', roomInfo?.title);
     getToken(name, roomName).then(({ token }) => {
       videoConnect(token);
-      // process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && chatConnect(token);
+      process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && chatConnect(token);
     });
   };
 

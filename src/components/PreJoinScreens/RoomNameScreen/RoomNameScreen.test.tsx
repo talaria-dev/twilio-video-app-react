@@ -3,6 +3,7 @@ import RoomNameScreen from './RoomNameScreen';
 import { shallow } from 'enzyme';
 import { TextField } from '@material-ui/core';
 import { useAppState } from '../../../state';
+import { Steps } from '../PreJoinScreens';
 
 jest.mock('../../../state');
 const mockUseAppState = useAppState as jest.Mock<any>;
@@ -17,6 +18,9 @@ describe('the RoomNameScreen component', () => {
         setName={() => {}}
         setRoomName={() => {}}
         handleSubmit={() => {}}
+        setStep={function(step: Steps): void {
+          throw new Error('Function not implemented.');
+        }}
       />
     );
 
@@ -33,6 +37,9 @@ describe('the RoomNameScreen component', () => {
         setName={() => {}}
         setRoomName={() => {}}
         handleSubmit={() => {}}
+        setStep={function(step: Steps): void {
+          throw new Error('Function not implemented.');
+        }}
       />
     );
 
@@ -58,6 +65,9 @@ describe('the RoomNameScreen component', () => {
         setName={() => {}}
         setRoomName={() => {}}
         handleSubmit={() => {}}
+        setStep={function(step: Steps): void {
+          throw new Error('Function not implemented.');
+        }}
       />
     );
 

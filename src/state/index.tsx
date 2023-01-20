@@ -40,6 +40,14 @@ export interface StateContextType {
   };
 
   updateRecordingRules(room_sid: string, rules: RecordingRules, client_id: string): Promise<object>;
+  isGalleryViewActive: boolean;
+  setIsGalleryViewActive: React.Dispatch<React.SetStateAction<boolean>>;
+  maxGalleryViewParticipants: number;
+  setMaxGalleryViewParticipants: React.Dispatch<React.SetStateAction<number>>;
+  isKrispEnabled: boolean;
+  setIsKrispEnabled: React.Dispatch<React.SetStateAction<boolean>>;
+  isKrispInstalled: boolean;
+  setIsKrispInstalled: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const StateContext = createContext<StateContextType>(null!);

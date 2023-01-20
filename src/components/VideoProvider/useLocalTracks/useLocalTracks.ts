@@ -10,7 +10,7 @@ import Video, {
 import { useAppState } from '../../../state';
 
 const noiseCancellationOptions: NoiseCancellationOptions = {
-  sdkAssetsPath: '/noisecancellation',
+  sdkAssetsPath: '/confroom/noisecancellation',
   vendor: 'krisp',
 };
 

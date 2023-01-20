@@ -72,8 +72,10 @@ export const ChatProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     if (room && chatClient) {
+      console.log('room', room);
+      console.log('chatClient', chatClient);
       chatClient
-        .getConversationByUniqueName(room.sid)
+        .getConversationByUniqueName(room.name)
         .then(newConversation => {
           //@ts-ignore
           window.chatConversation = newConversation;
