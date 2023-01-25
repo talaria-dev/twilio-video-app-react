@@ -90,10 +90,10 @@ export default function Room() {
     const urlSearchParams = new URLSearchParams(window.location.search);
     const params = Object.fromEntries(urlSearchParams.entries());
 
-    // console.log('# isAudioEnabled : ', isAudioEnabled);
-    // console.log('# isVideoEnabled : ', isVideoEnabled);
-    // console.log('# mic : ', params.mic);
-    // console.log('# cam : ', params.cam);
+    console.log('# isAudioEnabled : ', isAudioEnabled);
+    console.log('# isVideoEnabled : ', isVideoEnabled);
+    console.log('# mic : ', params.mic);
+    console.log('# cam : ', params.cam);
 
     if (params.mic && params.cam) {
       if (params.mic === 'on' && !isAudioEnabled) {
