@@ -8,7 +8,7 @@ import PreJoinScreens from './components/PreJoinScreens/PreJoinScreens';
 import ReconnectingNotification from './components/ReconnectingNotification/ReconnectingNotification';
 import RecordingNotifications from './components/RecordingNotifications/RecordingNotifications';
 import Room from './components/Room/Room';
-
+import useChatContext from './hooks/useChatContext/useChatContext';
 import useHeight from './hooks/useHeight/useHeight';
 import useRoomState from './hooks/useRoomState/useRoomState';
 import { useAppState } from './state';
@@ -114,6 +114,7 @@ export default function App() {
   const { getToken, roomInfo } = useAppState();
 
   const { connect: videoConnect, isAcquiringLocalTracks, localTracks, getAudioAndVideoTracks } = useVideoContext();
+  const { connect: chatConnect } = useChatContext();
 
   const [showPreloader, setShowPreloader] = useState(true);
   const [tokenError, setTokenError] = useState(false);
@@ -222,6 +223,7 @@ export default function App() {
             console.log('CONNECTED TO ROOM');
             setShowPreloader(false);
           });
+          process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && chatConnect(token);
         })
         .catch(error => {
           setTokenError(true);
