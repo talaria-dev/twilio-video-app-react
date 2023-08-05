@@ -22,4 +22,4 @@ jobs:
 
     - name: Sync directory to S3
       run: |
-        aws s3 sync ./build/ s3://tlr-confroom
+        aws s3 sync ./build/ s3://tlr-static/confroom/
