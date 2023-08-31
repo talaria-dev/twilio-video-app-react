@@ -1,6 +1,7 @@
 {
   "name": "twilio-video-app-react",
   "version": "0.9.1",
+  "homepage": "./",
   "private": true,
   "license": "Apache-2.0",
   "dependencies": {
