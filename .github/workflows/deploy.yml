@@ -3,7 +3,7 @@ name: Deploy to S3
 on:
   push:
     branches:
-      - tlr-changes
+      - production
 
 jobs:
   deploy:
